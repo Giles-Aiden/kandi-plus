@@ -1,42 +1,46 @@
 <template>
   <div class="maker">
     <div class="kandiData">
-      <select v-model="type">
-        <!-- 
-          Perler - Square and Equal
-          Multi - Vertical Shift
-          Peyote - Horizontal Shift
-        -->
-        <option value="perler">Perler - Square</option>
-        <option value="multi">Multi - Vertical</option>
-        <option value="peyote" selected>Peyote - Horizontal</option>
-      </select>
-      <input 
-        type="number"
-        v-model="width"
-        placeholder="columns"
-        min="1"
-        max="100"
-      />
-      <input
-        type="number"
-        v-model="height"
-        placeholder="rows"
-        min="1"
-        max="100"
-      />
-      <button type="button" @click="genData">Create!</button>
-      <br>`
-      <input id="color" type="color" v-model="color" />
+      <form @keyup.enter="genData">
+        <select v-model="type">
+          <!-- 
+            Perler - Square and Equal
+            Multi - Vertical Shift
+            Peyote - Horizontal Shift
+          -->
+          <option value="perler">Perler - Square</option>
+          <option value="ladder">Ladder - Square</option>
+          <option value="multi">Multi - Vertical</option>
+          <option value="peyote" selected>Peyote - Horizontal</option>
+        </select>
+        <input
+          type="number"
+          v-model="width"
+          placeholder="columns"
+          min="1"
+          max="100"
+        />
+        <input
+          type="number"
+          v-model="height"
+          placeholder="rows"
+          min="1"
+          max="100"
+        />
+        <input id="color" type="color" v-model="color" />
+        <button type="button" @click="genData">Create!</button>
+      </form>
     </div>
-    <Designer
-      class="designer"
-      :width="width"
-      :height="height"
-      :selectedColor="color"
-      :type="type"
-      :kandi="kandi"
-    />
+    <div class="designContain">
+      <Designer
+        class="designer"
+        :width="parseInt(width)"
+        :height="parseInt(height)"
+        :selectedColor="color"
+        :type="type"
+        :kandi="kandi"
+      />
+    </div>
   </div>
 </template>
 
@@ -46,7 +50,7 @@ import Designer from "@/components/Designer.vue";
 
 let height = ref();
 let width = ref();
-let color = ref("#FFFFFF")
+let color = ref("#FFFFFF");
 let type = ref("multi");
 
 /* Builds an Array of Arrays. Inside are objects containing point and color data.
@@ -58,14 +62,11 @@ let type = ref("multi");
  */
 let kandi = ref(new Object());
 const genData = () => {
-  console.log(kandi.value);
   kandi.value.type = type;
   kandi.value.data = [];
   for (let w = 0; w < width.value; w++) {
-    kandi.value.data.push([]);
-    kandi.value.data[w] = [];
     for (let h = 0; h < height.value; h++) {
-      kandi.value.data[w].push({
+      kandi.value.data.push({
         row: h,
         column: w,
         color: color.value,
@@ -80,6 +81,7 @@ const genData = () => {
   display: flex;
   justify-content: center;
   flex-flow: column nowrap;
+  overflow-x: hidden;
   .kandiData {
     display: flex;
     flex-flow: row wrap;
@@ -89,9 +91,10 @@ const genData = () => {
       flex-basis: 100%;
     }
   }
-  .designer {
-    max-width: 100%;
+  .designContain {
     overflow: auto;
+    border: 1px solid blue;
+    touch-action: none;
   }
 }
 </style>
