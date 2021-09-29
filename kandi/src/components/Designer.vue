@@ -2,9 +2,7 @@
   <div class="designer">
     <button @click="genCanvas">Generate Canvas</button>
     <div class="canvas" v-if="props.kandi">
-      <canvas
-        id="canvas"
-        @pointermove="canvasTouch($event)"
+      <canvas id="canvas" @pointermove="canvasTouch($event)"
         >Your browser doesn't support the canvas tag. And that is genuinely
         surprising, for the love of god how old is your browser? You should
         update for your own safety.
@@ -39,7 +37,8 @@ let size = 30,
 let genCanvas = () => {
   let canvas = document.getElementById("canvas");
   canvas.width = canvasWidth = props.width * size + border * (props.width - 1);
-  canvas.height = canvasHeight = props.height * size + border * (props.height - 1);
+  canvas.height = canvasHeight =
+    props.height * size + border * (props.height - 1);
   let ctx = canvas.getContext("2d");
   for (let i = 0; i < kandi.value.data.length; i++) {
     let point = kandi.value.data[i];
@@ -101,7 +100,8 @@ let editCanvas = (x, y) => {
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;
-    #canvas {}
+    #canvas {
+    }
   }
 }
 </style>
