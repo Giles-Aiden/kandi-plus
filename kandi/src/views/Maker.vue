@@ -17,12 +17,14 @@
           type="number"
           v-model="width"
           placeholder="columns"
+          id="inputColumn"
           min="1"
           max="100"
         />
         <input
           type="number"
           v-model="height"
+          id="inputRow"
           placeholder="rows"
           min="1"
           max="100"
@@ -52,6 +54,7 @@ let height = ref();
 let width = ref();
 let color = ref("#FFFFFF");
 let type = ref("multi");
+let kandi = ref(new Object());
 
 /* Builds an Array of Arrays. Inside are objects containing point and color data.
  *
@@ -60,7 +63,6 @@ let type = ref("multi");
  *     Objects (Row, Column, and Color)
  * ]]
  */
-let kandi = ref(new Object());
 const genData = () => {
   kandi.value.type = type;
   kandi.value.data = [];
@@ -73,6 +75,7 @@ const genData = () => {
       });
     }
   }
+  return kandi.value;
 };
 </script>
 
