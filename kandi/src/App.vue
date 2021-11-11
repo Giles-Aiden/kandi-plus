@@ -3,7 +3,13 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/maker">Maker</router-link>
   </div>
-  <router-view />
+  <transition
+    enter-active-class="animate__animated animate__fadeIn"
+    leave-active-class="animate__animated animate__fadeOut"
+    :duration="{ enter: 10000, leave: 10000 }"
+  >
+    <router-view />
+  </transition>
 </template>
 
 <style lang="scss">

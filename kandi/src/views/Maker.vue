@@ -1,82 +1,68 @@
 <template>
   <div class="maker">
-    <div class="kandiData">
-      <form @keyup.enter="genData">
-        <select v-model="type">
-          <!-- 
-            Perler - Square and Equal
-            Multi - Vertical Shift
-            Peyote - Horizontal Shift
-          -->
-          <option value="perler">Perler - Square</option>
-          <option value="ladder">Ladder - Square</option>
-          <option value="multi">Multi - Vertical</option>
-          <option value="peyote" selected>Peyote - Horizontal</option>
-        </select>
-        <input
-          type="number"
-          v-model="width"
-          placeholder="columns"
-          id="inputColumn"
-          min="1"
-          max="100"
+    {{ store.state.selectedColor }}
+    <div class="col-contain">
+      <div class="col">
+        <p>{{ store.state.kandi.rows }}<br />beads<br />tall</p>
+        <Slider
+          v-model="store.state.kandi.rows"
+          orientation="vertical"
+          :min="4"
+          :max="100"
+          style="height: 5em"
+          @slideend="store.commit('genKandi')"
         />
-        <input
-          type="number"
-          v-model="height"
-          id="inputRow"
-          placeholder="rows"
-          min="1"
-          max="100"
+      </div>
+      <div class="col">
+        <p>{{ store.state.kandi.cols }}<br />beads long</p>
+        <Slider
+          v-model="store.state.kandi.cols"
+          :min="4"
+          :max="100"
+          style="width: 5em"
+          @slideend="store.commit('genKandi')"
         />
-        <input id="color" type="color" v-model="color" />
-        <button type="button" @click="genData">Create!</button>
-      </form>
+        <img
+          v-if="store.state.kandi.type == 'peyote'"
+          src="@/assets/peyote_kandi.svg"
+          :style="{ width: '10em' }"
+        />
+      </div>
+      <div class="col">
+        <p>Color</p>
+        <ColorPicker v-model="selectedColor" :inline="false" />
+      </div>
     </div>
-    <div class="designContain">
-      <Designer
-        class="designer"
-        :width="parseInt(width)"
-        :height="parseInt(height)"
-        :selectedColor="color"
-        :type="type"
-        :kandi="kandi"
-      />
+    <div>
+      <transition
+        enter-active-class="animate__animated animate__jackInTheBox"
+      >
+        <Button v-if="store.state.kandi.data.length > 0" icon="pi pi-check" @click="gotoDesigner(true)" />
+      </transition>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Designer from "@/components/Designer.vue";
-
-let height = ref();
-let width = ref();
-let color = ref("#FFFFFF");
-let type = ref("multi");
-let kandi = ref(new Object());
-
-/* Builds an Array of Arrays. Inside are objects containing point and color data.
- *
- * Array 1 (Row) [
- *   Array 2 (Column) [
- *     Objects (Row, Column, and Color)
- * ]]
- */
-const genData = () => {
-  kandi.value.type = type;
-  kandi.value.data = [];
-  for (let w = 0; w < width.value; w++) {
-    for (let h = 0; h < height.value; h++) {
-      kandi.value.data.push({
-        row: h,
-        column: w,
-        color: color.value,
-      });
-    }
-  }
-  return kandi.value;
-};
+//import Designer from "@/components/Designer.vue";
+import Slider from "primevue/slider";
+import Button from "primevue/button";
+import ColorPicker from "primevue/colorpicker";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router"; 
+import { computed } from "vue";
+let router = useRouter();
+let store = useStore();
+let selectedColor = computed({
+  get: () => store.state.selectedColor,
+  set: (nval) => store.state.selectedColor = "#" + nval,
+});
+let gotoDesigner = (isNew) => {
+  store.state.isNewCanvas = isNew;
+  router.push({
+    name: 'designer',
+  });
+}
 </script>
 
 <style lang="scss">
@@ -84,20 +70,24 @@ const genData = () => {
   display: flex;
   justify-content: center;
   flex-flow: column nowrap;
-  overflow-x: hidden;
-  .kandiData {
+  overflow: hidden;
+  .col-contain {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     justify-content: center;
-    padding-bottom: 1em;
-    #color {
-      flex-basis: 100%;
+    .col,
+    .row {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
+      & > * {
+        margin: 0.2em;
+      }
     }
-  }
-  .designContain {
-    overflow: auto;
-    border: 1px solid blue;
-    touch-action: none;
+    .row {
+      flex-flow: row nowrap;
+    }
   }
 }
 </style>
